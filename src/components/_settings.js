@@ -1,80 +1,215 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Box, List, ListItem, ListItemText, Button, Select, MenuItem, FormControl, InputLabel, Divider } from '@mui/material';
+import React, { useState } from "react";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Divider,
+  FormControlLabel,
+  Switch,
+  Paper,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 
-// Sample data for users and recent activity
-const initialUsers = [
-  { id: 1, name: '_Asmir', role: 'Admin' },
-  { id: 2, name: '_Begovic', role: 'User' },
-  { id: 3, name: '_Eden', role: 'User' },
-];
-
-const recentQuotes = [
-  { id: 1, customer: '_roman', amount: 450 },
-  { id: 2, customer: '_liman', amount: 700 },
-  { id: 3, customer: '_elkana', amount: 300 },
-];
-
-const popularConfigurations = [
-  { id: 1, configuration: 'Polycarbonate Roof - Manual Control' },
-  { id: 2, configuration: 'Glass Roof - Remote Control' },
-];
 
 const Settings = () => {
-  const [users, setUsers] = useState(initialUsers);
+  const [profileName, setProfileName] = useState("John Doe"); // Profile name
+  const [email, setEmail] = useState("johndoe@example.com"); // Email
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true); // Email notifications
+ // const [darkMode, setDarkMode] = useState(false); // Dark mode toggle
+ const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar state
+ const [snackbarMessage, setSnackbarMessage] = useState(""); // Snackbar message
+ const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // Snackbar severity ("success", "error", etc.)
 
-  // Handler to update user role
-  const handleRoleChange = (id, newRole) => {
-    setUsers(users.map(user => (user.id === id ? { ...user, role: newRole } : user)));
+  const handleSaveChanges = () => {
+    console.log("Settings saved:", {
+      profileName,
+      email,
+      notificationsEnabled,
+      
+    });
+    setSnackbarMessage("Settings saved successfully!");
+    setSnackbarSeverity("success");
+    setSnackbarOpen(true);
+  };
+
+  const handleLogout = () => {
+    console.log("User logged out");
+    setSnackbarMessage("You have been logged out!");
+    setSnackbarSeverity("info");
+    setSnackbarOpen(true);
+
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 2000);
+  };
+
+  
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") return; // Prevent accidental dismissal
+    setSnackbarOpen(false);
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h5">Settings</Typography>
+    <Box sx={{ padding: 4, position: "relative" }}>
 
-      {/* User Management Section */}
-      <Typography variant="h6" sx={{ mt: 3 }}>User Management</Typography>
-      <List>
-        {users.map(user => (
-          <ListItem key={user.id} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <ListItemText primary={user.name} secondary={`Role: ${user.role}`} />
-            <FormControl variant="outlined" sx={{ minWidth: 120 }}>
-              <InputLabel>Role</InputLabel>
-              <Select
-                value={user.role}
-                onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                label="Role"
-              >
-                <MenuItem value="Admin">Admin</MenuItem>
-                <MenuItem value="User">User</MenuItem>
-              </Select>
-            </FormControl>
-          </ListItem>
-        ))}
-      </List>
-
-      <Divider sx={{ my: 3 }} />
-
-      {/* Real-Time Statistics */}
-      <Typography variant="h6">Recent Activity</Typography>
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="subtitle1">Recent Quotes</Typography>
-        <List>
-          {recentQuotes.map(quote => (
-            <ListItem key={quote.id}>
-              <ListItemText primary={`Customer: ${quote.customer}`} secondary={`Amount: ${quote.amount}`} />
-            </ListItem>
-          ))}
-        </List>
-        
-        <Typography variant="subtitle1" sx={{ mt: 2 }}>Popular Configurations</Typography>
-        <List>
-          {popularConfigurations.map(config => (
-            <ListItem key={config.id}>
-              <ListItemText primary={config.configuration} />
-            </ListItem>
-          ))}
-        </List>
+       {/* Snackbar for messages */}
+       <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000} // Snackbar auto-hide time in milliseconds
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position of the Snackbar
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity} // Severity determines the color (success, error, etc.)
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+      {/* Creative Under Construction Banner */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: -20,
+          left: "50%",
+          transform: "translateX(-50%)",
+          bgcolor: "#ff9800",
+          color: "#ffffff",
+          padding: "10px 20px",
+          borderRadius: "20px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          animation: "pulse 2s infinite",
+        }}
+      >
+        🤖 Robots are currently very busy building this site. Please stand by! 🚧
       </Box>
+
+      {/* Keyframes for animation */}
+      <style>
+        {`
+          @keyframes pulse {
+            0% {
+              transform: translateX(-50%) scale(1);
+            }
+            50% {
+              transform: translateX(-50%) scale(1.1);
+            }
+            100% {
+              transform: translateX(-50%) scale(1);
+            }
+          }
+        `}
+      </style>
+
+      {/* Settings Content */}
+      <Typography variant="h4" sx={{ fontWeight: "bold", mb: 4 }}>
+        Settings
+      </Typography>
+
+      {/* Profile Settings */}
+      <Paper sx={{ padding: 3, borderRadius: 2, boxShadow: 2, mb: 4 }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Profile Settings
+        </Typography>
+        <TextField
+          fullWidth
+          label="Name"
+          value={profileName}
+          onChange={(e) => setProfileName(e.target.value)}
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          fullWidth
+          label="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          sx={{ mb: 2 }}
+        />
+      </Paper>
+
+      {/* Notifications */}
+      <Paper sx={{ padding: 3, borderRadius: 2, boxShadow: 2, mb: 4 }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Notifications
+        </Typography>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={notificationsEnabled}
+              onChange={(e) => setNotificationsEnabled(e.target.checked)}
+            />
+          }
+          label={
+            notificationsEnabled
+              ? "Email Notifications Enabled"
+              : "Email Notifications Disabled"
+          }
+        />
+      </Paper>
+
+      {/* Security */}
+      <Paper sx={{ padding: 3, borderRadius: 2, boxShadow: 2, mb: 4 }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Security
+        </Typography>
+        <Button variant="outlined">Change Password</Button>
+      </Paper>
+
+      {/* Account Information */}
+      <Paper sx={{ padding: 3, borderRadius: 2, boxShadow: 2, mb: 4 }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Account Information
+        </Typography>
+        <Typography variant="body2">Account Status: Active</Typography>
+        <Typography variant="body2">Member Since: January 1, 2025</Typography>
+      </Paper>
+
+      {/* Privacy */}
+      <Paper sx={{ padding: 3, borderRadius: 2, boxShadow: 2, mb: 4 }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Privacy
+        </Typography>
+        <FormControlLabel
+          control={<Switch />}
+          label="Show Profile Publicly"
+        />
+      </Paper>
+
+      {/* Save Changes */}
+      <Divider sx={{ mb: 2 }} />
+      <Button
+        variant="contained"
+        onClick={handleSaveChanges}
+        sx={{
+          mt: 2,
+          bgcolor: "#918829",
+          "&:hover": {
+            bgcolor: "#776c1d",
+          },
+        }}
+      >
+        Save Changes
+      </Button>
+
+      {/* Logout Button */}
+      <Button
+        variant="contained"
+        onClick={handleLogout}
+        sx={{
+          mt: 2,
+          ml: 2,
+          bgcolor: "#918829",
+          "&:hover": {
+            bgcolor: "#776c1d",
+          },
+        }}
+      >
+        Logout
+      </Button>
     </Box>
   );
 };
